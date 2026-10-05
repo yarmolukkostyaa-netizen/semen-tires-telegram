@@ -1,0 +1,32 @@
+export default {
+  async fetch(request, env) {
+    if (request.method !== "POST") {
+      return new Response("OK");
+    }
+
+    const d = await request.json();
+
+    const text =
+      "🚗 НОВА ЗАЯВКА — SEMEN TIRES\n\n" +
+      "👤 Ім'я: " + (d.name || "—") + "\n" +
+      "📞 Телефон: " + (d.phone || "—") + "\n" +
+      "🔧 Послуга: " + (d.service || "—") + "\n" +
+      "💰 Вартість: " + (d.price || "—") + " грн";
+
+    await fetch(
+      "https://api.telegram.org/bot" +
+      env.TELEGRAM_BOT_TOKEN +
+      "/sendMessage",
+      {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+          chat_id: env.TELEGRAM_CHAT_ID,
+          text: text
+        })
+      }
+    );
+
+    return new Response("OK");
+  }
+};
